@@ -86,7 +86,7 @@
     </div>
 </div>
 
-<!-- রেজিস্ট্রেশন -->
+<!-- রেজিস্ট্রেশন (শুধু ব্যবহারকারী) -->
 <div id="registerScreen" style="display:none; max-width:460px; margin:60px auto; background:rgba(0,0,20,0.92); padding:40px; border-radius:15px; border:2px solid #00b140; text-align:center;">
     <h2 style="color:#00b140;">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
     <input type="text" id="regName" placeholder="পুরো নাম">
@@ -98,7 +98,7 @@
     <div id="regMessage" class="message"></div>
 </div>
 
-<!-- OTP -->
+<!-- OTP (শুধু ব্যবহারকারী) -->
 <div id="otpScreen" style="display:none; max-width:460px; margin:80px auto; background:rgba(0,0,20,0.92); padding:40px; border-radius:15px; border:2px solid #00b140; text-align:center;">
     <h3>নিরাপত্তা যাচাইকরণ</h3>
     <div id="otpStep1">
@@ -169,9 +169,8 @@
                 <div id="addBalanceResult" class="message"></div>
             </div>
 
-            <!-- অন্যান্য সেকশন (CDR, ফেস চেকিং, সাইবার ক্রাইম ইত্যাদি) -->
-            <!-- আপনি আগের কোড থেকে যোগ করে নিতে পারেন, সবগুলোতে searchService('type') কল করা আছে -->
-
+            <!-- অন্য সেকশন (CDR, ফেস চেকিং, সাইবার ক্রাইম ইত্যাদি) -->
+            <!-- আপনি চাইলে এখানে আগের সেকশনগুলো যোগ করতে পারেন -->
         </div>
     </div>
 </div>
@@ -278,7 +277,7 @@
     function adminLogin() {
         const userid = document.getElementById("adminUserid").value.trim();
         const pass = document.getElementById("adminPass").value.trim();
-        if (userid.toLowerCase() === "admin" && pass === "Admin") {
+        if (userid === "Admin" && pass === "Admin") {
             currentUser = { name: "Admin", isAdmin: true };
             loginSuccess();
         } else {
@@ -299,7 +298,7 @@
         }, 800);
     }
 
-    // OTP সিস্টেম
+    // OTP শুধুমাত্র সাধারণ ইউজারের জন্য
     document.getElementById("requestOtpBtn").onclick = async () => {
         const mobile = document.getElementById("mobileNumber").value.trim();
         if (!/^01\d{9}$/.test(mobile)) {
@@ -436,19 +435,17 @@
         document.getElementById("profileModal").style.display = "none";
     }
 
-    // লগআউট ফাংশন
+    // লগআউট
     function logout() {
-        if (confirm("আপনি কি লগআউট করতে চান?")) {
-            currentUser = null;
-            generatedOtp = "";
-            liveUsed = false;
-            document.getElementById("dashboard").style.display = "none";
-            document.getElementById("authScreen").style.display = "block";
-            document.getElementById("loginType").value = "user";
-            document.getElementById("userLogin").style.display = "block";
-            document.getElementById("dbLogin").style.display = "none";
-            document.getElementById("adminLogin").style.display = "none";
-        }
+        currentUser = null;
+        generatedOtp = "";
+        liveUsed = false;
+        document.getElementById("dashboard").style.display = "none";
+        document.getElementById("authScreen").style.display = "block";
+        document.getElementById("loginType").value = "user";
+        document.getElementById("userLogin").style.display = "block";
+        document.getElementById("dbLogin").style.display = "none";
+        document.getElementById("adminLogin").style.display = "none";
     }
 
     window.onload = () => {
