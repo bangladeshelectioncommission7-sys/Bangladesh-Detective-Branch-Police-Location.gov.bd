@@ -8,12 +8,12 @@
         :root { --primary: #00b140; }
         body { margin:0; font-family:'Segoe UI',Arial,sans-serif; background:linear-gradient(to bottom,#001f3f,#000814); color:#e0e0ff; min-height:100vh; }
         .header { background:#001f3f; padding:12px 30px; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--primary); position:sticky; top:0; z-index:100; }
-        .logo { width:65px; }
+        .logo { width:80px; }
         .header-center { text-align:center; flex:1; }
         .header-center h1 { margin:0; color:#00b140; font-size:2.1em; text-shadow:0 0 15px #00b140; }
 
         .container { display:flex; min-height:calc(100vh - 80px); }
-        .sidebar { width:290px; background:rgba(0,0,20,0.95); border-right:1px solid #00b140; padding-top:20px; overflow-y:auto; }
+        .sidebar { width:300px; background:rgba(0,0,20,0.95); border-right:1px solid #00b140; padding-top:20px; overflow-y:auto; }
         .sidebar a, .dropdown-header { display:block; padding:14px 25px; color:#e0e0ff; text-decoration:none; border-left:4px solid transparent; cursor:pointer; }
         .sidebar a:hover, .sidebar a.active, .dropdown-header:hover { background:rgba(0,177,64,0.25); border-left-color:#00b140; color:#00b140; }
         .dropdown-content { display:none; padding-left:40px; background:rgba(0,0,0,0.3); }
@@ -27,83 +27,97 @@
         .pulse-dot { position:absolute; width:26px; height:26px; background:#ffff00; border-radius:50%; box-shadow:0 0 35px #ffff00; animation:pulse 2.5s infinite; left:48%; top:42%; transform:translate(-50%,-50%); z-index:10; }
         @keyframes pulse { 0%,100% { transform:translate(-50%,-50%) scale(1); } 50% { transform:translate(-50%,-50%) scale(2.1); } }
 
-        input, button, select { width:100%; padding:14px; margin:10px 0; font-size:1.05em; border-radius:6px; border:1px solid #00b140; background:#000814; color:#e0e0ff; }
+        input, button { width:100%; padding:14px; margin:10px 0; font-size:1.05em; border-radius:6px; border:1px solid #00b140; background:#000814; color:#e0e0ff; }
         button { background:#00b140; color:#000; font-weight:bold; cursor:pointer; }
         button:hover { background:#008c30; }
 
-        .message { padding:12px; margin:15px 0; border-radius:6px; font-weight:600; }
+        .message { padding:14px; margin:15px 0; border-radius:8px; font-weight:600; text-align:center; }
+        .success { background:rgba(0,177,64,0.2); color:#00b140; border:1px solid #00b140; }
+        .error { background:rgba(255,42,109,0.2); color:#ff2a6d; border:1px solid #ff2a6d; }
+
         .loading { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; flex-direction:column; color:#fff; }
-        .spinner { width:55px; height:55px; border:6px solid #333; border-top:6px solid #00b140; border-radius:50%; animation:spin 1s linear infinite; margin-bottom:15px; }
+        .spinner { width:60px; height:60px; border:7px solid #333; border-top:7px solid #00b140; border-radius:50%; animation:spin 1.2s linear infinite; margin-bottom:15px; }
         @keyframes spin { to { transform:rotate(360deg); } }
+
+        #profileModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:2000; justify-content:center; align-items:center; }
     </style>
 </head>
 <body>
 
 <div class="loading" id="loading">
     <div class="spinner"></div>
-    <p>অপেক্ষা করুন...</p>
+    <p id="loadingText">প্রসেসিং চলছে...</p>
 </div>
 
-<!-- Auth Screen -->
+<!-- লগইন স্ক্রিন -->
 <div id="authScreen">
-    <div style="max-width:450px; margin:60px auto; background:rgba(0,0,20,0.92); padding:40px; border-radius:15px; border:2px solid #00b140; text-align:center;">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Bangladesh_Police_Emblem.svg" class="logo" alt="বাংলাদেশ পুলিশ">
+    <div style="max-width:460px; margin:60px auto; background:rgba(0,0,20,0.92); padding:40px; border-radius:15px; border:2px solid #00b140; text-align:center;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/3d/Detective_Branch_(Dhaka_Metropolitan_Police)_Insignia.svg" class="logo" alt="ডিটেকটিভ ব্রাঞ্চ">
         <h2 style="color:#00b140;">CPC • ILIS</h2>
         <p style="color:#aaa;">বাংলাদেশ পুলিশ সাইবার ক্রাইম ট্র্যাকিং সিস্টেম</p>
 
-        <div id="loginForm">
+        <select id="loginType" style="margin:15px 0; padding:12px; width:100%;">
+            <option value="user">ব্যবহারকারী</option>
+            <option value="db">ডিবি অফিসার (স্পেশাল)</option>
+        </select>
+
+        <div id="userLogin">
             <input type="text" id="loginUserid" placeholder="ইউজার আইডি">
             <input type="password" id="loginPass" placeholder="পাসওয়ার্ড">
             <button onclick="userLogin()">লগইন করুন</button>
             <button onclick="showRegister()" style="background:transparent; border:1px solid #00b140; color:#00b140; margin-top:10px;">নতুন অ্যাকাউন্ট রেজিস্টার করুন</button>
         </div>
 
-        <div id="registerForm" style="display:none;">
-            <input type="text" id="regName" placeholder="পুরো নাম">
-            <input type="text" id="regUserid" placeholder="ইউজার আইডি">
-            <input type="password" id="regPass" placeholder="পাসওয়ার্ড">
-            <input type="text" id="regMobile" placeholder="মোবাইল নম্বর (01XXXXXXXXX)">
-            <button onclick="registerUser()">রেজিস্ট্রেশন সম্পন্ন করুন</button>
-            <button onclick="showLogin()" style="background:transparent; border:1px solid #00b140; color:#00b140; margin-top:10px;">লগইন ফিরে যান</button>
+        <div id="dbLogin" style="display:none;">
+            <input type="text" id="bpCode" placeholder="সিক্রেট BP Code">
+            <button onclick="dbOfficerLogin()">প্রবেশ করুন</button>
         </div>
 
         <div id="authMessage" class="message"></div>
     </div>
 </div>
 
-<!-- OTP Screen -->
-<div id="otpScreen" style="display:none; max-width:450px; margin:80px auto; background:rgba(0,0,20,0.92); padding:40px; border-radius:15px; border:2px solid #00b140; text-align:center;">
+<!-- রেজিস্ট্রেশন -->
+<div id="registerScreen" style="display:none; max-width:460px; margin:60px auto; background:rgba(0,0,20,0.92); padding:40px; border-radius:15px; border:2px solid #00b140; text-align:center;">
+    <h2 style="color:#00b140;">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+    <input type="text" id="regName" placeholder="পুরো নাম">
+    <input type="text" id="regUserid" placeholder="ইউজার আইডি">
+    <input type="password" id="regPass" placeholder="পাসওয়ার্ড">
+    <input type="text" id="regMobile" placeholder="মোবাইল নম্বর (01XXXXXXXXX)">
+    <button onclick="registerUser()">রেজিস্ট্রেশন করুন</button>
+    <button onclick="backToLogin()" style="background:transparent; border:1px solid #00b140; color:#00b140; margin-top:10px;">লগইন ফিরে যান</button>
+    <div id="regMessage" class="message"></div>
+</div>
+
+<!-- OTP -->
+<div id="otpScreen" style="display:none; max-width:460px; margin:80px auto; background:rgba(0,0,20,0.92); padding:40px; border-radius:15px; border:2px solid #00b140; text-align:center;">
     <h3>নিরাপত্তা যাচাইকরণ</h3>
-    
     <div id="otpStep1">
-        <p style="color:#aaa; margin:15px 0;">OTP পাওয়ার জন্য মোবাইল নম্বর দিন</p>
+        <p style="color:#aaa;">OTP পাওয়ার জন্য মোবাইল নম্বর দিন</p>
         <input type="text" id="mobileNumber" placeholder="01XXXXXXXXX" maxlength="11">
         <button id="requestOtpBtn">OTP পাঠান</button>
     </div>
-    
     <div id="otpInputArea" style="display:none; margin-top:20px;">
         <p style="color:#aaa;">৬ ডিজিট OTP কোড লিখুন</p>
         <input type="text" id="otpCode" placeholder="XXXXXX" maxlength="6">
         <div id="timerDisplay" style="margin:10px 0; font-weight:bold; color:#0f0;">বাকি সময়: 02:00</div>
         <button onclick="verifyOTP()">যাচাই করুন</button>
     </div>
-    
     <div id="otpMessage" class="message"></div>
 </div>
 
-<!-- Dashboard -->
+<!-- ড্যাশবোর্ড -->
 <div id="dashboard" style="display:none;">
     <div class="header">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Bangladesh_Police_Emblem.svg" class="logo" alt="লোগো">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/3d/Detective_Branch_(Dhaka_Metropolitan_Police)_Insignia.svg" class="logo" alt="ডিটেকটিভ ব্রাঞ্চ">
         <div class="header-center">
             <h1>CPC • ILIS</h1>
             <p style="margin:0; color:#aaa;">বাংলাদেশ পুলিশ সাইবার ইউনিট</p>
         </div>
-        <button onclick="showProfile()" style="background:none; border:none; font-size:1.8em; color:#00b140; cursor:pointer;">👤</button>
+        <button onclick="showProfile()" style="background:none; border:none; font-size:1.8em; color:#00b140;">👤</button>
     </div>
 
     <div class="container">
-        <!-- Sidebar -->
         <div class="sidebar">
             <a onclick="showSection('live')" class="active" id="menuLive">মোবাইল / IMEI লাইভ লোকেশন ট্র্যাকিং</a>
             <a onclick="showSection('cdr')">CDR ডাউনলোড</a>
@@ -118,127 +132,117 @@
             </div>
 
             <a onclick="showSection('biometric')">বায়োমেট্রিক তথ্য</a>
+            <a onclick="showSection('faceCheck')">ফেস চেকিং অ্যানালাইসিস</a>
             <a onclick="showSection('cyberdb')">সাইবার ক্রাইম ডাটাবেস</a>
+            
+            <a onclick="showSection('addBalance')" id="addBalanceMenu" style="display:none; color:#ff0; font-weight:bold;">কাস্টমার ব্যালেন্স এড করুন</a>
         </div>
 
-        <!-- Content -->
         <div class="content">
-
-            <!-- Live Tracking -->
+            <!-- লাইভ ট্র্যাকিং -->
             <div id="liveSection" class="card">
                 <h3>মোবাইল / IMEI লাইভ লোকেশন ট্র্যাকিং</h3>
                 <input type="text" id="trackInput" placeholder="মোবাইল নম্বর বা IMEI দিন">
                 <button onclick="startLiveTracking()">ট্রেস শুরু করুন</button>
                 <div id="liveResult" style="display:none; margin-top:20px;">
-                    <div class="status success" id="trackStatus"></div>
+                    <div class="message success" id="liveStatus"></div>
                     <div class="map-container"><div class="pulse-dot" id="targetDot"></div></div>
-                    <p class="success" style="text-align:center; font-size:1.2em; margin-top:15px;" id="locationText">বর্তমান লোকেশন সিগনাল এর আশেপাশে রয়েছে</p>
+                    <p class="message success" id="locationText">বর্তমান লোকেশন সিগনাল এর আশেপাশে রয়েছে</p>
                 </div>
             </div>
 
-            <!-- CDR -->
+            <!-- ব্যালেন্স এড সেকশন (শুধু ডিবি) -->
+            <div id="addBalanceSection" class="card" style="display:none;">
+                <h3>কাস্টমার ব্যালেন্স এড করুন</h3>
+                <input type="text" id="customerUserid" placeholder="কাস্টমার ইউজার আইডি">
+                <input type="number" id="addAmount" placeholder="যোগ করার টাকার পরিমাণ">
+                <button onclick="addCustomerBalance()">ব্যালেন্স যোগ করুন</button>
+                <div id="addBalanceResult" class="message"></div>
+            </div>
+
+            <!-- অন্য সেকশনগুলো (সবগুলোতে রিচার্জ মেসেজ) -->
             <div id="cdrSection" class="card" style="display:none;">
                 <h3>CDR ডাউনলোড</h3>
                 <input type="text" id="cdrInput" placeholder="মোবাইল নম্বর দিন">
-                <button onclick="getCDRData()">সার্চ করুন</button>
-                <div id="cdrResultArea" style="display:none; margin-top:20px;">
-                    <button onclick="attemptCDRDownload()" style="background:#c00;">PDF ডাউনলোড করুন</button>
-                    <div id="cdrMessage" class="message"></div>
+                <button onclick="searchService('cdr')">সার্চ করুন</button>
+                <div id="cdrResult" style="display:none; margin-top:15px;">
+                    <button onclick="downloadPDF()" style="background:#c00;">PDF ডাউনলোড করুন</button>
                 </div>
             </div>
 
-            <!-- মোবাইল টু লাস্ট লোকেশন -->
-            <div id="lastLocationSection" class="card" style="display:none;">
-                <h3>মোবাইল টু লাস্ট লোকেশন</h3>
-                <input type="text" id="lastLocInput" placeholder="মোবাইল নম্বর দিন">
-                <button onclick="getLastLocation()">সার্চ করুন</button>
-                <div id="lastLocResult" class="message" style="display:none;"></div>
+            <!-- ফেস চেকিং -->
+            <div id="faceCheckSection" class="card" style="display:none;">
+                <h3>ফেস চেকিং অ্যানালাইসিস</h3>
+                <input type="file" id="faceFile" accept="image/*" style="display:none;">
+                <label for="faceFile" style="display:block; padding:20px; background:#001f3f; border:2px dashed #00b140; border-radius:10px; cursor:pointer; margin:15px 0;">
+                    মানুষের ছবি আপলোড করুন
+                </label>
+                <button onclick="searchService('faceCheck')">ফেস অ্যানালাইসিস করুন</button>
+                <div id="faceResult" style="display:none; margin-top:20px;">
+                    <button onclick="downloadPDF()" style="background:#c00;">PDF ডাউনলোড করুন</button>
+                </div>
             </div>
 
-            <!-- IMEI সেকশনগুলো -->
-            <div id="imeiLastSection" class="card" style="display:none;">
-                <h3>IMEI ট্র্যাকিং লাস্ট লোকেশন</h3>
-                <input type="text" id="imeiLastInput" placeholder="IMEI নম্বর দিন">
-                <button onclick="searchImei('last')">সার্চ করুন</button>
-                <div id="imeiLastResult" class="message" style="display:none;"></div>
-            </div>
-
-            <div id="imeiLocationSection" class="card" style="display:none;">
-                <h3>IMEI to Location</h3>
-                <input type="text" id="imeiLocInput" placeholder="IMEI নম্বর দিন">
-                <button onclick="searchImei('location')">সার্চ করুন</button>
-                <div id="imeiLocResult" class="message" style="display:none;"></div>
-            </div>
-
-            <div id="imeiActiveSection" class="card" style="display:none;">
-                <h3>IMEI to Active Number</h3>
-                <input type="text" id="imeiActiveInput" placeholder="IMEI নম্বর দিন">
-                <button onclick="searchImei('active')">সার্চ করুন</button>
-                <div id="imeiActiveResult" class="message" style="display:none;"></div>
-            </div>
-
-            <div id="imeiAllSection" class="card" style="display:none;">
-                <h3>IMEI to All Number</h3>
-                <input type="text" id="imeiAllInput" placeholder="IMEI নম্বর দিন">
-                <button onclick="searchImei('all')">সার্চ করুন</button>
-                <div id="imeiAllResult" class="message" style="display:none;"></div>
-            </div>
-
-            <!-- বায়োমেট্রিক -->
-            <div id="biometricSection" class="card" style="display:none;">
-                <h3>বায়োমেট্রিক তথ্য</h3>
-                <input type="text" id="bioInput" placeholder="মোবাইল দিন">
-                <button onclick="getBiometric()">সার্চ করুন</button>
-                <div id="bioResult" class="message" style="display:none;"></div>
-            </div>
-
-            <!-- সাইবার ক্রাইম ডাটাবেস -->
+            <!-- সাইবার ক্রাইম -->
             <div id="cyberdbSection" class="card" style="display:none;">
                 <h3>সাইবার ক্রাইম ডাটাবেস</h3>
                 <input type="text" id="crimeInput" placeholder="নাম / কেস আইডি / মোবাইল">
-                <button onclick="searchCyberCrime()">সার্চ করুন</button>
-                <div id="crimeResult" class="message" style="display:none;"></div>
+                <button onclick="searchService('cyberdb')">সার্চ করুন</button>
+                <div id="cyberResult" style="display:none; margin-top:15px;">
+                    <button onclick="downloadPDF()" style="background:#c00;">PDF ডাউনলোড করুন</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Profile Modal -->
+<!-- প্রোফাইল মোডাল -->
 <div id="profileModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:2000; justify-content:center; align-items:center;">
     <div style="background:rgba(0,0,20,0.95); padding:30px; border-radius:12px; border:2px solid #00b140; max-width:500px; width:90%;">
         <h3 style="color:#00b140; text-align:center;">ইউজার প্রোফাইল</h3>
-        <div id="profileInfo" style="margin:20px 0; line-height:2.2;"></div>
-        <button onclick="closeProfile()" style="width:100%; background:#c00;">বন্ধ করুন</button>
+        <div id="profileInfo" style="margin:25px 0; line-height:2.2; font-size:1.05em;"></div>
+        <button onclick="closeProfile()" style="width:100%; background:#c00; padding:12px;">বন্ধ করুন</button>
     </div>
 </div>
 
 <script>
+    let usersDB = JSON.parse(localStorage.getItem("usersDB")) || {}; // সব ইউজারের ডাটা
     let currentUser = null;
     let generatedOtp = "";
     let timerInterval = null;
-    let accessBlocked = false;
-    let searchCount = {};
 
-    function showLoading() { document.getElementById("loading").style.display = "flex"; }
+    function saveUsersDB() {
+        localStorage.setItem("usersDB", JSON.stringify(usersDB));
+    }
+
+    function showLoading(text = "প্রসেসিং চলছে...") {
+        document.getElementById("loadingText").innerText = text;
+        document.getElementById("loading").style.display = "flex";
+    }
     function hideLoading() { document.getElementById("loading").style.display = "none"; }
 
     function showMessage(id, text, isError) {
         const el = document.getElementById(id);
         if (el) {
-            el.innerHTML = text;
-            el.className = `message ${isError ? 'error' : 'success'}`;
+            el.innerHTML = `<div class="message ${isError ? 'error' : 'success'}">${text}</div>`;
             el.style.display = "block";
         }
     }
 
-    // Register & Login
+    // লগইন টাইপ সুইচ
+    document.getElementById("loginType").onchange = function() {
+        document.getElementById("userLogin").style.display = this.value === "user" ? "block" : "none";
+        document.getElementById("dbLogin").style.display = this.value === "db" ? "block" : "none";
+    };
+
     function showRegister() {
-        document.getElementById("loginForm").style.display = "none";
-        document.getElementById("registerForm").style.display = "block";
+        document.getElementById("authScreen").style.display = "none";
+        document.getElementById("registerScreen").style.display = "block";
     }
-    function showLogin() {
-        document.getElementById("registerForm").style.display = "none";
-        document.getElementById("loginForm").style.display = "block";
+
+    function backToLogin() {
+        document.getElementById("registerScreen").style.display = "none";
+        document.getElementById("authScreen").style.display = "block";
     }
 
     function registerUser() {
@@ -247,21 +251,24 @@
         const pass = document.getElementById("regPass").value.trim();
         const mobile = document.getElementById("regMobile").value.trim();
 
-        if (!name || !userid || !pass || !mobile) return showMessage("authMessage", "সব তথ্য পূরণ করুন", true);
+        if (!name || !userid || !pass || !mobile) {
+            showMessage("regMessage", "সব তথ্য পূরণ করুন", true);
+            return;
+        }
 
-        currentUser = { name, userid, pass, server, balance: "১৫০০.০০ টাকা" };
-        localStorage.setItem("cpcUser", JSON.stringify(currentUser));
-        showMessage("authMessage", "রেজিস্ট্রেশন সফল। লগইন করুন।", false);
-        setTimeout(showLogin, 1500);
+        usersDB[userid] = { name, userid, pass, mobile, balance: 1500 };
+        saveUsersDB();
+
+        showMessage("regMessage", "রেজিস্ট্রেশন সফল হয়েছে! এখন লগইন করুন।", false);
+        setTimeout(backToLogin, 1800);
     }
 
     function userLogin() {
         const userid = document.getElementById("loginUserid").value.trim();
         const pass = document.getElementById("loginPass").value.trim();
-        const stored = JSON.parse(localStorage.getItem("cpcUser") || "{}");
 
-        if (userid && pass && stored.userid === userid && stored.pass === pass) {
-            currentUser = stored;
+        if (usersDB[userid] && usersDB[userid].pass === pass) {
+            currentUser = usersDB[userid];
             showLoading();
             setTimeout(() => {
                 hideLoading();
@@ -273,30 +280,44 @@
         }
     }
 
-    // OTP System (তোমার API)
+    function dbOfficerLogin() {
+        if (document.getElementById("bpCode").value.trim() === "BP-786-DBX") {
+            currentUser = { name: "ডিবি অফিসার", isDB: true };
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                document.getElementById("authScreen").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+                showSection('live');
+                document.getElementById("addBalanceMenu").style.display = "block";
+            }, 800);
+        } else {
+            showMessage("authMessage", "ভুল BP Code! শুধুমাত্র ডিবি অফিসারদের জন্য।", true);
+        }
+    }
+
+    // OTP (তোমার API)
     document.getElementById("requestOtpBtn").onclick = async () => {
         const mobile = document.getElementById("mobileNumber").value.trim();
         if (!/^01\d{9}$/.test(mobile)) {
             showMessage("otpMessage", "১১ ডিজিটের সঠিক মোবাইল নম্বর দিন!", true);
             return;
         }
-
         showLoading();
         try {
             generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-
             await fetch("/api/send-otp", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ mobile: mobile, otp: generatedOtp })
-            }).catch(() => ({ ok: true }));
+            }).catch(() => ({}));
 
             document.getElementById("otpStep1").style.display = "none";
             document.getElementById("otpInputArea").style.display = "block";
             startTimer(120);
             showMessage("otpMessage", "মোবাইলে OTP পাঠানো হয়েছে!", false);
         } catch(e) {
-            showMessage("otpMessage", "সার্ভার ত্রুটি! আবার চেষ্টা করুন।", true);
+            showMessage("otpMessage", "সার্ভার ত্রুটি!", true);
         } finally {
             hideLoading();
         }
@@ -309,16 +330,12 @@
             const min = Math.floor(timer / 60);
             const sec = timer % 60;
             document.getElementById("timerDisplay").textContent = `বাকি সময়: ${min}:${sec < 10 ? '0' : ''}${sec}`;
-            if (--timer < 0) {
-                clearInterval(timerInterval);
-                showMessage("otpMessage", "OTP এর মেয়াদ শেষ হয়েছে।", true);
-            }
+            if (--timer < 0) clearInterval(timerInterval);
         }, 1000);
     }
 
     function verifyOTP() {
-        const entered = document.getElementById("otpCode").value.trim();
-        if (entered === generatedOtp) {
+        if (document.getElementById("otpCode").value.trim() === generatedOtp) {
             showLoading();
             setTimeout(() => {
                 hideLoading();
@@ -331,70 +348,85 @@
         }
     }
 
-    // Sidebar Functions
     function toggleDropdown(el) {
-        const content = el.nextElementSibling;
-        content.classList.toggle("show");
+        el.nextElementSibling.classList.toggle("show");
     }
 
     function showSection(sec) {
-        if (accessBlocked) {
-            showMessage("liveResult", "দুঃখিত, এটি বাংলাদেশ পুলিশের সাইবার ইউনিটের ডাটাবেজ। অযথা সার্চ করার কারণে আপনার পোর্টাল অ্যাক্সেস সাময়িকভাবে বন্ধ করা হয়েছে।", true);
-            return;
-        }
-
         document.querySelectorAll('.card').forEach(c => c.style.display = 'none');
         const target = document.getElementById(sec + 'Section');
         if (target) target.style.display = 'block';
-
-        document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
     }
 
-    // Live Tracking
+    // লাইভ ট্র্যাকিং (একবার)
+    let liveUsed = false;
     function startLiveTracking() {
-        if (checkSearchLimit('live')) return;
+        if (liveUsed) {
+            showMessage("liveResult", "দুঃখিত আপনার পোর্টালে পর্যাপ্ত পরিমাণে ব্যালেন্স নেই।", true);
+            return;
+        }
+        if (currentUser.balance < 1230) {
+            showMessage("liveResult", "দুঃখিত আপনার পোর্টালে পর্যাপ্ত পরিমাণে ব্যালেন্স নেই।", true);
+            return;
+        }
+
+        currentUser.balance -= 1230;
+        usersDB[currentUser.userid] = currentUser;
+        saveUsersDB();
+        liveUsed = true;
+
         const result = document.getElementById("liveResult");
         result.style.display = "block";
-        document.getElementById("trackStatus").innerHTML = "ট্র্যাকিং সফল! রিয়েল-টাইম সিগনাল অ্যাকটিভ।";
+        document.getElementById("liveStatus").innerHTML = "ট্র্যাকিং সফল! রিয়েল-টাইম সিগনাল অ্যাকটিভ।";
         document.getElementById("locationText").innerHTML = "বর্তমান লোকেশন সিগনাল এর আশেপাশে রয়েছে";
     }
 
-    // CDR
-    function getCDRData() {
-        if (checkSearchLimit('cdr')) return;
-        document.getElementById("cdrResultArea").style.display = "block";
-        showMessage("cdrMessage", "CDR তথ্য পাওয়া গেছে।", false);
+    // অন্য সব সার্চ
+    function searchService(type) {
+        showLoading("ব্যালেন্স চেক করা হচ্ছে...");
+        setTimeout(() => {
+            hideLoading();
+            const resultId = type + "Result";
+            showMessage(resultId, "দুঃখিত আপনার পোর্টালে পর্যাপ্ত পরিমাণে ব্যালেন্স নেই।", true);
+        }, 1600);
     }
 
-    function attemptCDRDownload() {
-        showMessage("cdrMessage", "দুঃখিত, আপনার পোর্টালে পর্যাপ্ত পরিমাণের রিচার্জ নেই,  তাই বর্তমানে ডাউনলোড বন্ধ রয়েছে।", true);
+    function downloadPDF() {
+        showMessage("cdrResult", "দুঃখিত আপনার পোর্টালে পর্যাপ্ত পরিমাণে ব্যালেন্স নেই।", true);
     }
 
-    // অন্যান্য সেকশনের সার্চ (একই লজিক)
-    function checkSearchLimit(type) {
-        if (!searchCount[type]) searchCount[type] = 0;
-        searchCount[type]++;
-        if (searchCount[type] > 1) {
-            accessBlocked = true;
-            showMessage("liveResult", "দুঃখিত, এটি বাংলাদেশ পুলিশের সাইবার ইউনিটের ডাটাবেজ। অযথা সার্চ করার কারণে আপনার পোর্টাল অ্যাক্সেস সাময়িকভাবে বন্ধ করা হয়েছে।", true);
-            return true;
+    function startFaceAnalysis() {
+        if (!document.getElementById("faceFile").files.length) {
+            showMessage("faceResult", "ছবি আপলোড করুন", true);
+            return;
         }
-        return false;
+        searchService('faceCheck');
     }
 
-    function getLastLocation() { if (!checkSearchLimit('last')) showMessage("lastLocResult", "লাস্ট লোকেশন পাওয়া গেছে।", false); }
-    function searchImei(type) { 
-        if (!checkSearchLimit('imei')) {
-            const id = type === 'last' ? 'imeiLastResult' : type === 'location' ? 'imeiLocResult' : type === 'active' ? 'imeiActiveResult' : 'imeiAllResult';
-            showMessage(id, `IMEI ${type} তথ্য পাওয়া গেছে।`, false);
+    // কাস্টমার ব্যালেন্স এড (শুধু ডিবি অফিসার)
+    function addCustomerBalance() {
+        if (!currentUser || !currentUser.isDB) {
+            showMessage("addBalanceResult", "এই অপশন শুধুমাত্র ডিবি অফিসারদের জন্য।", true);
+            return;
         }
-    }
-    function getBiometric() { if (!checkSearchLimit('bio')) showMessage("bioResult", "বায়োমেট্রিক তথ্য পাওয়া গেছে।", false); }
-    function searchCyberCrime() { 
-        if (!checkSearchLimit('cyber')) {
-            const texts = ["Unnamed - ফিশিং কেস", "Unnamed - সেক্সটর্শন", "Unnamed - অনলাইন প্রতারণা"];
-            showMessage("crimeResult", texts[Math.floor(Math.random()*texts.length)], false);
+
+        const customerId = document.getElementById("customerUserid").value.trim();
+        const amount = parseInt(document.getElementById("addAmount").value);
+
+        if (!customerId || !amount || amount <= 0) {
+            showMessage("addBalanceResult", "সঠিক ইউজার আইডি ও টাকার পরিমাণ দিন", true);
+            return;
         }
+
+        if (!usersDB[customerId]) {
+            showMessage("addBalanceResult", "এই ইউজার আইডি পাওয়া যায়নি", true);
+            return;
+        }
+
+        usersDB[customerId].balance = (usersDB[customerId].balance || 0) + amount;
+        saveUsersDB();
+
+        showMessage("addBalanceResult", `${customerId} এর অ্যাকাউন্টে ${amount} টাকা সফলভাবে যোগ করা হয়েছে।`, false);
     }
 
     function showProfile() {
@@ -402,9 +434,9 @@
         const info = document.getElementById("profileInfo");
         info.innerHTML = `
             <strong>নাম:</strong> ${currentUser.name}<br>
-            <strong>ইউজার আইডি:</strong> ${currentUser.userid}<br>
-            <strong>মোবাইল:</strong> ${currentUser.mobile}<br>
-            <strong>অ্যাকাউন্ট ব্যালেন্স:</strong> ${currentUser.balance}<br><br>
+            <strong>ইউজার আইডি:</strong> ${currentUser.userid || 'N/A'}<br>
+            <strong>মোবাইল:</strong> ${currentUser.mobile || 'N/A'}<br>
+            <strong>পোর্টাল ব্যালেন্স:</strong> ${currentUser.balance || 0} টাকা<br><br>
             <strong>স্ট্যাটাস:</strong> <span style="color:#0f0;">সক্রিয়</span>
         `;
         document.getElementById("profileModal").style.display = "flex";
@@ -414,10 +446,8 @@
         document.getElementById("profileModal").style.display = "none";
     }
 
-    function logout() { location.reload(); }
-
     window.onload = () => {
-        // প্রথমে লগইন দেখাবে
+        document.getElementById("userLogin").style.display = "block";
     };
 </script>
 </body>
