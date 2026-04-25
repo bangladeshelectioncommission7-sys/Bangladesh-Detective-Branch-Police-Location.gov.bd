@@ -7,18 +7,18 @@
     <style>
         :root { --primary: #00b140; }
         body { margin:0; font-family:'Segoe UI',Arial,sans-serif; background:linear-gradient(to bottom,#001f3f,#000814); color:#e0e0ff; min-height:100vh; }
-        .header { background:#001f3f; padding:12px 30px; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--primary); position:sticky; top:0; z-index:100; }
-        .logo { width:80px; }
+        .header { background:#001f3f; padding:10px 25px; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--primary); position:sticky; top:0; z-index:100; }
+        .logo { width:70px; }
         .header-center { text-align:center; flex:1; }
-        .header-center h1 { margin:0; color:#00b140; font-size:2.1em; text-shadow:0 0 15px #00b140; }
+        .header-center h1 { margin:0; color:#00b140; font-size:2em; text-shadow:0 0 15px #00b140; }
 
-        .container { display:flex; min-height:calc(100vh - 80px); }
+        .container { display:flex; min-height:calc(100vh - 72px); }
         .sidebar { width:310px; background:rgba(0,0,20,0.95); border-right:1px solid #00b140; padding-top:20px; overflow-y:auto; }
-        .sidebar a, .dropdown-header { display:block; padding:14px 25px; color:#e0e0ff; text-decoration:none; border-left:4px solid transparent; cursor:pointer; }
+        .sidebar a, .dropdown-header { display:block; padding:13px 25px; color:#e0e0ff; text-decoration:none; border-left:4px solid transparent; cursor:pointer; }
         .sidebar a:hover, .sidebar a.active, .dropdown-header:hover { background:rgba(0,177,64,0.25); border-left-color:#00b140; color:#00b140; }
         .dropdown-content { display:none; padding-left:40px; background:rgba(0,0,0,0.3); }
         .dropdown-content.show { display:block; }
-        .dropdown-content a { padding:10px 25px; font-size:0.98em; }
+        .dropdown-content a { padding:10px 25px; font-size:0.97em; }
 
         .content { flex:1; padding:25px; }
         .card { background:rgba(0,0,20,0.8); border:1px solid #00b140; border-radius:12px; padding:25px; margin-bottom:25px; box-shadow:0 0 25px rgba(0,177,64,0.3); }
@@ -27,18 +27,18 @@
         .pulse-dot { position:absolute; width:26px; height:26px; background:#ffff00; border-radius:50%; box-shadow:0 0 35px #ffff00; animation:pulse 2.5s infinite; left:48%; top:42%; transform:translate(-50%,-50%); z-index:10; }
         @keyframes pulse { 0%,100% { transform:translate(-50%,-50%) scale(1); } 50% { transform:translate(-50%,-50%) scale(2.1); } }
 
-        input, button { width:100%; padding:14px; margin:10px 0; font-size:1.05em; border-radius:6px; border:1px solid #00b140; background:#000814; color:#e0e0ff; }
+        input, button { width:100%; padding:13px; margin:10px 0; font-size:1.05em; border-radius:6px; border:1px solid #00b140; background:#000814; color:#e0e0ff; }
         button { background:#00b140; color:#000; font-weight:bold; cursor:pointer; }
         button:hover { background:#008c30; }
 
-        .logout-btn { background:#c00; color:white; padding:8px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
+        .logout-btn { background:#c00; color:white; padding:7px 18px; border:none; border-radius:6px; cursor:pointer; font-size:0.95em; }
 
-        .message { padding:14px; margin:15px 0; border-radius:8px; font-weight:600; text-align:center; }
+        .message { padding:13px; margin:12px 0; border-radius:8px; font-weight:600; text-align:center; }
         .success { background:rgba(0,177,64,0.2); color:#00b140; border:1px solid #00b140; }
         .error { background:rgba(255,42,109,0.2); color:#ff2a6d; border:1px solid #ff2a6d; }
 
         .loading { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; flex-direction:column; color:#fff; }
-        .spinner { width:60px; height:60px; border:7px solid #333; border-top:7px solid #00b140; border-radius:50%; animation:spin 1.2s linear infinite; margin-bottom:15px; }
+        .spinner { width:55px; height:55px; border:6px solid #333; border-top:6px solid #00b140; border-radius:50%; animation:spin 1.1s linear infinite; margin-bottom:12px; }
         @keyframes spin { to { transform:rotate(360deg); } }
 
         #profileModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:2000; justify-content:center; align-items:center; }
@@ -86,7 +86,7 @@
     </div>
 </div>
 
-<!-- রেজিস্ট্রেশন (শুধু ব্যবহারকারী) -->
+<!-- রেজিস্ট্রেশন -->
 <div id="registerScreen" style="display:none; max-width:460px; margin:60px auto; background:rgba(0,0,20,0.92); padding:40px; border-radius:15px; border:2px solid #00b140; text-align:center;">
     <h2 style="color:#00b140;">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
     <input type="text" id="regName" placeholder="পুরো নাম">
@@ -98,7 +98,7 @@
     <div id="regMessage" class="message"></div>
 </div>
 
-<!-- OTP (শুধু ব্যবহারকারী) -->
+<!-- OTP -->
 <div id="otpScreen" style="display:none; max-width:460px; margin:80px auto; background:rgba(0,0,20,0.92); padding:40px; border-radius:15px; border:2px solid #00b140; text-align:center;">
     <h3>নিরাপত্তা যাচাইকরণ</h3>
     <div id="otpStep1">
@@ -123,7 +123,10 @@
             <h1>CPC • ILIS</h1>
             <p style="margin:0; color:#aaa;">বাংলাদেশ পুলিশ সাইবার ইউনিট</p>
         </div>
-        <button onclick="logout()" class="logout-btn">লগআউট</button>
+        <div>
+            <button onclick="showProfile()" style="background:none; border:none; font-size:1.6em; color:#00b140; margin-right:12px;">👤</button>
+            <button onclick="logout()" class="logout-btn">লগআউট</button>
+        </div>
     </div>
 
     <div class="container">
@@ -144,7 +147,7 @@
             <a onclick="showSection('faceCheck')">ফেস চেকিং অ্যানালাইসিস</a>
             <a onclick="showSection('cyberdb')">সাইবার ক্রাইম ডাটাবেস</a>
             
-            <a onclick="showSection('addBalance')" id="addBalanceMenu" style="display:none; color:#ff0; font-weight:bold;">কাস্টমার ব্যালেন্স এড/কাট করুন</a>
+            <a onclick="showSection('addBalance')" id="addBalanceMenu" style="display:none; color:#ff0; font-weight:bold;">কাস্টমার ব্যালেন্স এড/কাট</a>
         </div>
 
         <div class="content">
@@ -164,13 +167,33 @@
             <div id="addBalanceSection" class="card" style="display:none;">
                 <h3>কাস্টমার ব্যালেন্স এড / কাট করুন</h3>
                 <input type="text" id="customerUserid" placeholder="কাস্টমার ইউজার আইডি">
-                <input type="number" id="addAmount" placeholder="টাকার পরিমাণ (পজিটিভ = যোগ, নেগেটিভ = কাট)">
+                <input type="number" id="addAmount" placeholder="টাকার পরিমাণ">
                 <button onclick="manageBalance()">কনফার্ম করুন</button>
                 <div id="addBalanceResult" class="message"></div>
             </div>
 
-            <!-- অন্য সেকশন (CDR, ফেস চেকিং, সাইবার ক্রাইম ইত্যাদি) -->
-            <!-- আপনি চাইলে এখানে আগের সেকশনগুলো যোগ করতে পারেন -->
+            <!-- অন্য সেকশনগুলো -->
+            <div id="cdrSection" class="card" style="display:none;">
+                <h3>CDR ডাউনলোড</h3>
+                <input type="text" id="cdrInput" placeholder="মোবাইল নম্বর দিন">
+                <button onclick="searchService('cdr')">সার্চ করুন</button>
+                <div id="cdrResult" style="display:none; margin-top:15px;">
+                    <button onclick="downloadPDF()" style="background:#c00;">PDF ডাউনলোড করুন</button>
+                </div>
+            </div>
+
+            <!-- ফেস চেকিং -->
+            <div id="faceCheckSection" class="card" style="display:none;">
+                <h3>ফেস চেকিং অ্যানালাইসিস</h3>
+                <input type="file" id="faceFile" accept="image/*" style="display:none;">
+                <label for="faceFile" style="display:block; padding:20px; background:#001f3f; border:2px dashed #00b140; border-radius:10px; cursor:pointer; margin:15px 0;">
+                    মানুষের ছবি আপলোড করুন
+                </label>
+                <button onclick="searchService('faceCheck')">ফেস অ্যানালাইসিস করুন</button>
+                <div id="faceResult" style="display:none; margin-top:20px;">
+                    <button onclick="downloadPDF()" style="background:#c00;">PDF ডাউনলোড করুন</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -189,6 +212,11 @@
     let currentUser = null;
     let generatedOtp = "";
     let timerInterval = null;
+
+    // Admin অ্যাকাউন্ট ইনিশিয়ালাইজ
+    if (!usersDB["Admin"]) {
+        usersDB["Admin"] = { name: "Admin", userid: "Admin", balance: 50000 };
+    }
 
     function saveUsersDB() {
         localStorage.setItem("usersDB", JSON.stringify(usersDB));
@@ -275,10 +303,9 @@
     }
 
     function adminLogin() {
-        const userid = document.getElementById("adminUserid").value.trim();
-        const pass = document.getElementById("adminPass").value.trim();
-        if (userid === "Admin" && pass === "Admin") {
-            currentUser = { name: "Admin", isAdmin: true };
+        if (document.getElementById("adminUserid").value.trim() === "Admin" && 
+            document.getElementById("adminPass").value.trim() === "Admin") {
+            currentUser = usersDB["Admin"];   // Admin-কে usersDB থেকে নেওয়া হচ্ছে
             loginSuccess();
         } else {
             showMessage("authMessage", "ভুল Admin তথ্য!", true);
@@ -298,7 +325,7 @@
         }, 800);
     }
 
-    // OTP শুধুমাত্র সাধারণ ইউজারের জন্য
+    // OTP (শুধু পাবলিক)
     document.getElementById("requestOtpBtn").onclick = async () => {
         const mobile = document.getElementById("mobileNumber").value.trim();
         if (!/^01\d{9}$/.test(mobile)) {
@@ -392,7 +419,7 @@
         showMessage("cdrResult", "দুঃখিত আপনার পোর্টালে পর্যাপ্ত পরিমাণে ব্যালেন্স নেই।", true);
     }
 
-    // ব্যালেন্স এড/কাট (Admin ও DB)
+    // ব্যালেন্স এড/কাট
     function manageBalance() {
         if (!currentUser || (!currentUser.isDB && !currentUser.isAdmin)) {
             showMessage("addBalanceResult", "এই অপশন শুধুমাত্র অথরাইজড অফিসারদের জন্য।", true);
@@ -439,7 +466,6 @@
     function logout() {
         currentUser = null;
         generatedOtp = "";
-        liveUsed = false;
         document.getElementById("dashboard").style.display = "none";
         document.getElementById("authScreen").style.display = "block";
         document.getElementById("loginType").value = "user";
@@ -449,6 +475,11 @@
     }
 
     window.onload = () => {
+        // Admin অ্যাকাউন্ট ইনিশিয়ালাইজ
+        if (!usersDB["Admin"]) {
+            usersDB["Admin"] = { name: "Admin", userid: "Admin", balance: 0 };
+            saveUsersDB();
+        }
         document.getElementById("userLogin").style.display = "block";
     };
 </script>
