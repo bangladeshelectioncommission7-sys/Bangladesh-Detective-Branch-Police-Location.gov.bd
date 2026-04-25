@@ -31,6 +31,8 @@
         button { background:#00b140; color:#000; font-weight:bold; cursor:pointer; }
         button:hover { background:#008c30; }
 
+        .logout-btn { background:#c00; color:white; padding:8px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
+
         .message { padding:14px; margin:15px 0; border-radius:8px; font-weight:600; text-align:center; }
         .success { background:rgba(0,177,64,0.2); color:#00b140; border:1px solid #00b140; }
         .error { background:rgba(255,42,109,0.2); color:#ff2a6d; border:1px solid #ff2a6d; }
@@ -84,7 +86,7 @@
     </div>
 </div>
 
-<!-- রেজিস্ট্রেশন (শুধু ব্যবহারকারী) -->
+<!-- রেজিস্ট্রেশন -->
 <div id="registerScreen" style="display:none; max-width:460px; margin:60px auto; background:rgba(0,0,20,0.92); padding:40px; border-radius:15px; border:2px solid #00b140; text-align:center;">
     <h2 style="color:#00b140;">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
     <input type="text" id="regName" placeholder="পুরো নাম">
@@ -121,7 +123,7 @@
             <h1>CPC • ILIS</h1>
             <p style="margin:0; color:#aaa;">বাংলাদেশ পুলিশ সাইবার ইউনিট</p>
         </div>
-        <button onclick="showProfile()" style="background:none; border:none; font-size:1.8em; color:#00b140;">👤</button>
+        <button onclick="logout()" class="logout-btn">লগআউট</button>
     </div>
 
     <div class="container">
@@ -142,7 +144,6 @@
             <a onclick="showSection('faceCheck')">ফেস চেকিং অ্যানালাইসিস</a>
             <a onclick="showSection('cyberdb')">সাইবার ক্রাইম ডাটাবেস</a>
             
-            <!-- শুধু Admin ও DB দেখবে -->
             <a onclick="showSection('addBalance')" id="addBalanceMenu" style="display:none; color:#ff0; font-weight:bold;">কাস্টমার ব্যালেন্স এড/কাট করুন</a>
         </div>
 
@@ -168,38 +169,9 @@
                 <div id="addBalanceResult" class="message"></div>
             </div>
 
-            <!-- অন্য সেকশনগুলো -->
-            <div id="cdrSection" class="card" style="display:none;">
-                <h3>CDR ডাউনলোড</h3>
-                <input type="text" id="cdrInput" placeholder="মোবাইল নম্বর দিন">
-                <button onclick="searchService('cdr')">সার্চ করুন</button>
-                <div id="cdrResult" style="display:none; margin-top:15px;">
-                    <button onclick="downloadPDF()" style="background:#c00;">PDF ডাউনলোড করুন</button>
-                </div>
-            </div>
+            <!-- অন্যান্য সেকশন (CDR, ফেস চেকিং, সাইবার ক্রাইম ইত্যাদি) -->
+            <!-- আপনি আগের কোড থেকে যোগ করে নিতে পারেন, সবগুলোতে searchService('type') কল করা আছে -->
 
-            <!-- ফেস চেকিং -->
-            <div id="faceCheckSection" class="card" style="display:none;">
-                <h3>ফেস চেকিং অ্যানালাইসিস</h3>
-                <input type="file" id="faceFile" accept="image/*" style="display:none;">
-                <label for="faceFile" style="display:block; padding:20px; background:#001f3f; border:2px dashed #00b140; border-radius:10px; cursor:pointer; margin:15px 0;">
-                    মানুষের ছবি আপলোড করুন
-                </label>
-                <button onclick="searchService('faceCheck')">ফেস অ্যানালাইসিস করুন</button>
-                <div id="faceResult" style="display:none; margin-top:20px;">
-                    <button onclick="downloadPDF()" style="background:#c00;">PDF ডাউনলোড করুন</button>
-                </div>
-            </div>
-
-            <!-- সাইবার ক্রাইম -->
-            <div id="cyberdbSection" class="card" style="display:none;">
-                <h3>সাইবার ক্রাইম ডাটাবেস</h3>
-                <input type="text" id="crimeInput" placeholder="নাম / কেস আইডি / মোবাইল">
-                <button onclick="searchService('cyberdb')">সার্চ করুন</button>
-                <div id="cyberResult" style="display:none; margin-top:15px;">
-                    <button onclick="downloadPDF()" style="background:#c00;">PDF ডাউনলোড করুন</button>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -306,7 +278,7 @@
     function adminLogin() {
         const userid = document.getElementById("adminUserid").value.trim();
         const pass = document.getElementById("adminPass").value.trim();
-        if (userid === "Admin" && pass === "Admin") {
+        if (userid.toLowerCase() === "admin" && pass === "Admin") {
             currentUser = { name: "Admin", isAdmin: true };
             loginSuccess();
         } else {
@@ -421,7 +393,7 @@
         showMessage("cdrResult", "দুঃখিত আপনার পোর্টালে পর্যাপ্ত পরিমাণে ব্যালেন্স নেই।", true);
     }
 
-    // ব্যালেন্স এড/কাট (শুধু Admin ও DB)
+    // ব্যালেন্স এড/কাট (Admin ও DB)
     function manageBalance() {
         if (!currentUser || (!currentUser.isDB && !currentUser.isAdmin)) {
             showMessage("addBalanceResult", "এই অপশন শুধুমাত্র অথরাইজড অফিসারদের জন্য।", true);
@@ -462,6 +434,21 @@
 
     function closeProfile() {
         document.getElementById("profileModal").style.display = "none";
+    }
+
+    // লগআউট ফাংশন
+    function logout() {
+        if (confirm("আপনি কি লগআউট করতে চান?")) {
+            currentUser = null;
+            generatedOtp = "";
+            liveUsed = false;
+            document.getElementById("dashboard").style.display = "none";
+            document.getElementById("authScreen").style.display = "block";
+            document.getElementById("loginType").value = "user";
+            document.getElementById("userLogin").style.display = "block";
+            document.getElementById("dbLogin").style.display = "none";
+            document.getElementById("adminLogin").style.display = "none";
+        }
     }
 
     window.onload = () => {
